@@ -3,583 +3,420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Audio Analysis Lab</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Respiratory Audio Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --bg: #070b14;
-    --panel: #0c1220;
-    --panel2: #101828;
-    --border: #1e3050;
-    --cyan: #00d4ff;
-    --green: #00ff88;
-    --amber: #ffb300;
-    --red: #ff4060;
-    --purple: #a855f7;
-    --text: #b8cce0;
-    --text-dim: #4a6080;
-    --mono: 'Share Tech Mono', monospace;
-    --display: 'Rajdhani', sans-serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--display);
-    font-size: 14px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* HEADER */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-    flex-shrink: 0;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-icon {
-    width: 32px; height: 32px;
-    border: 2px solid var(--cyan);
-    border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--cyan);
-    font-size: 16px;
-  }
-
-  .logo-text {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #fff;
-  }
-
-  .logo-sub {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--cyan);
-    letter-spacing: 2px;
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .badge {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 3px 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-  }
-
-  .badge.active { border-color: var(--green); color: var(--green); }
-
-  .upload-btn {
-    background: transparent;
-    border: 1px solid var(--cyan);
-    color: var(--cyan);
-    padding: 6px 16px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-
-  .upload-btn:hover {
-    background: var(--cyan);
-    color: var(--bg);
-  }
-
-  /* MAIN LAYOUT */
-  .main {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: 220px;
-    background: var(--panel);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-
-  .sidebar-header {
-    padding: 12px 14px 8px;
-    border-bottom: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  #file-count {
-    color: var(--cyan);
-    font-size: 11px;
-  }
-
-  .file-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 0;
-  }
-
-  .file-list::-webkit-scrollbar { width: 4px; }
-  .file-list::-webkit-scrollbar-track { background: transparent; }
-  .file-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .subject-group {
-    margin-bottom: 4px;
-  }
-
-  .subject-label {
-    padding: 4px 14px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--amber);
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .subject-label::before {
-    content: '';
-    display: inline-block;
-    width: 6px; height: 6px;
-    border: 1px solid var(--amber);
-    transform: rotate(45deg);
-  }
-
-  .file-item {
-    padding: 5px 14px 5px 26px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.15s;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text);
-    border-left: 2px solid transparent;
-  }
-
-  .file-item:hover { background: var(--panel2); }
-
-  .file-item.active {
-    background: #0a1f3a;
-    border-left-color: var(--cyan);
-    color: var(--cyan);
-  }
-
-  .type-badge {
-    font-size: 9px;
-    padding: 1px 5px;
-    border-radius: 2px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    flex-shrink: 0;
-  }
-
-  .type-MC { background: rgba(255,64,96,0.2); color: var(--red); border: 1px solid var(--red); }
-  .type-MB { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid var(--green); }
-  .type-MS { background: rgba(0,212,255,0.15); color: var(--cyan); border: 1px solid var(--cyan); }
-
-  /* DROP ZONE */
-  .drop-zone {
-    margin: 10px;
-    border: 1px dashed var(--border);
-    border-radius: 4px;
-    padding: 16px 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--text-dim);
-    font-size: 11px;
-    line-height: 1.6;
-  }
-
-  .drop-zone:hover, .drop-zone.drag-over {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    background: rgba(0,212,255,0.04);
-  }
-
-  .drop-icon { font-size: 22px; margin-bottom: 6px; }
-
-  /* MAIN CONTENT */
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 16px;
-    gap: 12px;
-  }
-
-  /* EMPTY STATE */
-  .empty-state {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-dim);
-    gap: 12px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
-
-  .empty-state .big-icon {
-    font-size: 48px;
-    opacity: 0.2;
-  }
-
-  /* FILE INFO CARD */
-  .info-card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .info-field {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .info-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-  }
-
-  .info-value {
-    font-family: var(--mono);
-    font-size: 14px;
-    color: #fff;
-    font-weight: 400;
-  }
-
-  .info-value.colored-mc { color: var(--red); }
-  .info-value.colored-mb { color: var(--green); }
-  .info-value.colored-ms { color: var(--cyan); }
-
-  .info-divider {
-    width: 1px;
-    height: 30px;
-    background: var(--border);
-  }
-
-  .filename-display {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-left: auto;
-    letter-spacing: 0.5px;
-  }
-
-  /* VISUALIZATIONS */
-  .viz-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .viz-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .viz-title {
-    padding: 8px 12px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    border-bottom: 1px solid var(--border);
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  .viz-title .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-  }
-
-  .dot-amber { background: var(--amber) !important; }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .canvas-wrap {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
-
-  canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .y-axis {
-    position: absolute;
-    top: 0; left: 0;
-    width: 36px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 4px 4px 4px 2px;
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--text-dim);
-    text-align: right;
-    pointer-events: none;
-  }
-
-  .x-axis {
-    position: absolute;
-    bottom: 0; left: 36px; right: 0;
-    height: 16px;
-    display: flex;
-    justify-content: space-between;
-    padding: 2px 4px;
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--text-dim);
-    pointer-events: none;
-  }
-
-  /* COLOR BAR */
-  .color-bar-wrap {
-    position: absolute;
-    right: 6px;
-    top: 6px;
-    bottom: 20px;
-    width: 10px;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  #color-bar-canvas {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* AUDIO PLAYER */
-  .player-bar {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
-  }
-
-  .play-btn {
-    width: 36px; height: 36px;
-    border: 1px solid var(--cyan);
-    background: transparent;
-    color: var(--cyan);
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-
-  .play-btn:hover { background: var(--cyan); color: var(--bg); }
-
-  .time-display {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--cyan);
-    white-space: nowrap;
-    flex-shrink: 0;
-    min-width: 90px;
-  }
-
-  .progress-wrap {
-    flex: 1;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    cursor: pointer;
-    position: relative;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--cyan);
-    border-radius: 2px;
-    width: 0%;
-    transition: width 0.1s linear;
-    pointer-events: none;
-  }
-
-  .vol-wrap {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .vol-icon {
-    font-size: 14px;
-    color: var(--text-dim);
-  }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    width: 80px;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    outline: none;
-  }
-
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--cyan);
-    cursor: pointer;
-  }
-
-  .audio-hidden { display: none; }
-
-  /* LOADING OVERLAY */
-  .loading-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(7,11,20,0.85);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--cyan);
-    letter-spacing: 2px;
-    z-index: 10;
-  }
-
-  .spinner {
-    width: 24px; height: 24px;
-    border: 2px solid var(--border);
-    border-top-color: var(--cyan);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .hidden { display: none !important; }
-
-  /* SCAN LINE EFFECT ON CANVASES */
-  .canvas-wrap::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(0,0,0,0.03) 4px
-    );
-    pointer-events: none;
-  }
-
-  /* GRID OVERLAY TOGGLE */
-  .grid-toggle {
-    margin-left: auto;
-    font-size: 9px;
-    cursor: pointer;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    user-select: none;
-  }
-
-  .grid-toggle:hover { color: var(--cyan); }
+:root {
+  --bg:        #f4f5f7;
+  --surface:   #ffffff;
+  --surface2:  #f9fafb;
+  --border:    #e2e4e9;
+  --border2:   #d0d4dc;
+  --text:      #1c2130;
+  --text-mid:  #4a5568;
+  --text-dim:  #8a96a8;
+  --accent:    #3a6bc4;
+  --accent-lt: #eef2fb;
+  --cough:     #c0392b;
+  --cough-lt:  #fdf1f0;
+  --breath:    #1a7a5e;
+  --breath-lt: #eef7f4;
+  --speech:    #2c5f9e;
+  --speech-lt: #edf3fb;
+  --mono:      'DM Mono', monospace;
+  --sans:      'DM Sans', sans-serif;
+  --radius:    6px;
+  --shadow:    0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* HEADER */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.brand { display:flex; align-items:center; gap:12px; }
+
+.brand-logo {
+  width:34px; height:34px;
+  background: var(--accent);
+  border-radius: var(--radius);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:16px;
+}
+
+.brand-name { font-weight:600; font-size:15px; letter-spacing:-0.2px; }
+.brand-sub  { font-size:12px; color:var(--text-dim); font-weight:400; }
+
+.header-pills { display:flex; align-items:center; gap:8px; }
+
+.pill {
+  font-family: var(--mono);
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:99px;
+  background: var(--surface2);
+  border:1px solid var(--border);
+  color:var(--text-dim);
+}
+
+.pill.ok { background:#eef7f2; border-color:#b6dfc8; color:#1a7a5e; }
+.pill.err{ background:#fdf1f0; border-color:#f5c2be; color:#c0392b; }
+
+/* LAYOUT */
+.main { display:flex; flex:1; overflow:hidden; }
+
+/* SIDEBAR */
+.sidebar {
+  width:240px;
+  background: var(--surface);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  flex-shrink:0; overflow:hidden;
+}
+
+.sidebar-top { padding:14px 16px 12px; border-bottom:1px solid var(--border); }
+
+.sidebar-section-title {
+  font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.8px;
+  color:var(--text-dim); margin-bottom:10px;
+}
+
+.legend { display:flex; flex-direction:column; gap:5px; }
+
+.legend-row {
+  display:flex; align-items:center; gap:8px;
+  font-size:12px; color:var(--text-mid);
+}
+
+.legend-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+
+.file-list { flex:1; overflow-y:auto; padding:8px 0; }
+.file-list::-webkit-scrollbar { width:4px; }
+.file-list::-webkit-scrollbar-track { background:transparent; }
+.file-list::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+.subject-group { margin-bottom:2px; }
+
+.subject-heading {
+  padding:8px 16px 4px;
+  font-size:11px; font-weight:600;
+  color:var(--text-dim); letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+
+.file-item {
+  display:flex; align-items:center; gap:9px;
+  padding:7px 16px;
+  cursor:pointer;
+  border-left:2px solid transparent;
+  transition:background 0.12s;
+  font-size:13px; color:var(--text-mid);
+}
+
+.file-item:hover { background:var(--surface2); }
+
+.file-item.active {
+  background:var(--accent-lt);
+  border-left-color:var(--accent);
+  color:var(--accent); font-weight:500;
+}
+
+.type-chip {
+  font-family: var(--mono);
+  font-size:10px; font-weight:500;
+  padding:2px 6px; border-radius:4px;
+  flex-shrink:0; letter-spacing:0.3px;
+}
+
+.chip-MC { background:var(--cough-lt);  color:var(--cough); }
+.chip-MB { background:var(--breath-lt); color:var(--breath); }
+.chip-MS { background:var(--speech-lt); color:var(--speech); }
+
+.file-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.sidebar-footer {
+  padding:10px 16px;
+  border-top:1px solid var(--border);
+  font-size:11px; color:var(--text-dim);
+  font-family:var(--mono);
+  word-break:break-all; line-height:1.5;
+}
+
+/* CONTENT */
+.content {
+  flex:1; display:flex; flex-direction:column;
+  overflow:hidden; padding:16px; gap:12px; min-width:0;
+}
+
+/* CONFIG BANNER */
+.config-banner {
+  background:#fffbeb; border:1px solid #fcd34d;
+  border-radius:var(--radius); padding:10px 14px;
+  font-size:12.5px; color:#92400e;
+  display:none; align-items:flex-start; gap:8px; line-height:1.6;
+  flex-shrink:0;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:10px; color:var(--text-dim);
+}
+
+.empty-icon {
+  width:56px; height:56px;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; margin-bottom:4px;
+}
+
+.empty-title { font-size:15px; font-weight:500; color:var(--text-mid); }
+.empty-desc  { font-size:13px; max-width:280px; text-align:center; line-height:1.6; }
+
+/* INFO STRIP */
+.info-strip {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:12px 18px;
+  display:flex; align-items:center; gap:0;
+  flex-shrink:0; box-shadow:var(--shadow);
+  flex-wrap:wrap; row-gap:8px;
+}
+
+.info-field { display:flex; flex-direction:column; gap:1px; padding:0 18px; }
+.info-field:first-child { padding-left:0; }
+.info-sep { width:1px; height:28px; background:var(--border); flex-shrink:0; }
+
+.info-label {
+  font-size:10px; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.8px; color:var(--text-dim);
+}
+
+.info-value { font-family:var(--mono); font-size:13px; color:var(--text); font-weight:500; }
+.info-value.v-mc { color:var(--cough);  }
+.info-value.v-mb { color:var(--breath); }
+.info-value.v-ms { color:var(--speech); }
+
+.info-filename {
+  margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--text-dim);
+  padding-left:16px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  max-width:260px;
+}
+
+/* VIZ GRID */
+.viz-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px; flex:1; min-height:0;
+}
+
+.viz-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  display:flex; flex-direction:column; overflow:hidden;
+  position:relative; min-height:0;
+}
+
+.viz-header {
+  padding:9px 14px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+  flex-shrink:0; background:var(--surface2);
+}
+
+.viz-indicator { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.ind-green { background:#34a853; }
+.ind-amber { background:#f59e0b; }
+
+.viz-title    { font-size:12px; font-weight:600; color:var(--text-mid); }
+.viz-subtitle { font-size:11px; color:var(--text-dim); }
+
+.viz-body { flex:1; position:relative; overflow:hidden; min-height:0; }
+canvas    { width:100%; height:100%; display:block; }
+
+.y-axis {
+  position:absolute; top:0; left:0; width:38px; height:100%;
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:4px 4px 18px 2px;
+  font-family:var(--mono); font-size:9px; color:var(--text-dim); text-align:right;
+  pointer-events:none;
+}
+
+.x-axis {
+  position:absolute; bottom:0; left:38px; right:0; height:18px;
+  display:flex; justify-content:space-between; align-items:center; padding:0 4px;
+  font-family:var(--mono); font-size:9px; color:var(--text-dim);
+  pointer-events:none;
+}
+
+.colorbar-wrap {
+  position:absolute; right:8px; top:4px; bottom:20px; width:10px;
+  border-radius:2px; overflow:hidden; border:1px solid var(--border);
+}
+
+.pos-line {
+  position:absolute; top:0; bottom:0; width:1px;
+  background:#f59e0b; opacity:0.75;
+  pointer-events:none; left:38px;
+}
+
+.loading-overlay {
+  position:absolute; inset:0; background:rgba(255,255,255,0.88);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px; font-size:12px; color:var(--text-dim); z-index:10; font-weight:500;
+}
+
+.spinner {
+  width:22px; height:22px;
+  border:2px solid var(--border2);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 0.75s linear infinite;
+}
+
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* PLAYER */
+.player-bar {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:10px 16px;
+  display:flex; align-items:center; gap:14px;
+  flex-shrink:0; box-shadow:var(--shadow);
+}
+
+.play-btn {
+  width:34px; height:34px; border-radius:50%;
+  background:var(--accent); border:none; color:#fff;
+  cursor:pointer; font-size:13px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.15s, transform 0.1s; flex-shrink:0;
+}
+
+.play-btn:hover { background:#2d57a8; transform:scale(1.05); }
+
+.time-display {
+  font-family:var(--mono); font-size:12px; color:var(--text-mid);
+  white-space:nowrap; min-width:88px; flex-shrink:0;
+}
+
+.progress-wrap {
+  flex:1; height:5px; background:var(--border);
+  border-radius:99px; cursor:pointer;
+}
+
+.progress-fill {
+  height:100%; background:var(--accent);
+  border-radius:99px; width:0%;
+  pointer-events:none; transition:width 0.08s linear;
+}
+
+.vol-wrap { display:flex; align-items:center; gap:7px; flex-shrink:0; color:var(--text-dim); font-size:14px; }
+
+input[type=range] {
+  -webkit-appearance:none; width:72px; height:4px;
+  background:var(--border); border-radius:99px; outline:none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:13px; height:13px;
+  border-radius:50%; background:var(--accent);
+  cursor:pointer; border:2px solid #fff; box-shadow:0 0 0 1px var(--border2);
+}
+
+audio { display:none; }
+.hidden { display:none !important; }
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════════════
+     ⚙️  CONFIGURATION  — Edit before deploying
+     ═══════════════════════════════════════════════════════ -->
+<script>
+const CONFIG = {
+  // ① Your GitHub username
+  GITHUB_USER: "RisSonthalia",
+
+  // ② Your repository name
+  GITHUB_REPO: "Audio_File_viewer",
+
+  // ③ Branch ("main" or "master" usually)
+  GITHUB_BRANCH: "main",
+
+  // ④ Subfolder inside the repo where .wav files live.
+  //    Use "" (empty string) if files are in the root.
+  AUDIO_FOLDER: "audio_files",
+
+  // ⑤ List every .wav filename you want shown in the sidebar.
+  //    Add or remove lines to match what's in your repo.
+  FILES : [
+    "S120_GF_MS_A26_R01.wav",
+    "S120_GF_MC_A26_R01.wav",
+    "S120_GF_MB_A26_R01.wav",
+
+    "S119_GM_MS_A19_R01.wav",
+    "S119_GM_MC_A19_R01.wav",
+    "S119_GM_MB_A19_R01.wav",
+
+    "S118_GF_MS_A18_R01.wav",
+    "S118_GF_MC_A18_R01.wav",
+    "S118_GF_MB_A18_R01.wav",
+
+    "S117_GF_MS_A21_R01.wav",
+    "S117_GF_MC_A21_R01.wav",
+    "S117_GF_MB_A21_R01.wav",
+
+    "S116_GF_MS_A21_R01.wav",
+    "S116_GF_MC_A21_R01.wav",
+    "S116_GF_MB_A21_R02.wav",
+
+    "S115_GF_MS_A19_R01.wav",
+    "S115_GF_MC_A19_R01.wav",
+    "S115_GF_MB_A19_R03.wav",
+]
+};
+
+function rawUrl(filename) {
+  const folder = CONFIG.AUDIO_FOLDER ? CONFIG.AUDIO_FOLDER + "/" : "";
+  return `https://raw.githubusercontent.com/${CONFIG.GITHUB_USER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${folder}${encodeURIComponent(filename)}`;
+}
+</script>
+<!-- ═══════════════════════════════════════════════════════ -->
+
 <header>
-  <div class="logo">
-    <div class="logo-icon">⌇</div>
+  <div class="brand">
+    <div class="brand-logo">🫁</div>
     <div>
-      <div class="logo-text">AudioLab</div>
-      <div class="logo-sub">Clinical Audio Analysis System</div>
+      <div class="brand-name">Respiratory Audio Analysis</div>
+      <div class="brand-sub">Cough · Breath · Speech — Waveform &amp; Spectrogram Viewer</div>
     </div>
   </div>
-  <div class="header-right">
-    <span class="badge">WAV · PCM</span>
-    <span class="badge active" id="status-badge">READY</span>
-    <button class="upload-btn" onclick="document.getElementById('file-input').click()">+ Load Files</button>
-    <input type="file" id="file-input" multiple accept=".wav,audio/*" class="audio-hidden">
+  <div class="header-pills">
+    <span class="pill" id="file-count-pill">0 files</span>
+    <span class="pill ok" id="status-pill">Ready</span>
   </div>
 </header>
 
@@ -587,131 +424,143 @@
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="sidebar-header">
-      File Index
-      <span id="file-count">0 files</span>
+    <div class="sidebar-top">
+      <div class="sidebar-section-title">Legend</div>
+      <div class="legend">
+        <div class="legend-row">
+          <div class="legend-dot" style="background:var(--cough)"></div>
+          MC — Cough
+        </div>
+        <div class="legend-row">
+          <div class="legend-dot" style="background:var(--breath)"></div>
+          MB — Breathing
+        </div>
+        <div class="legend-row">
+          <div class="legend-dot" style="background:var(--speech)"></div>
+          MS — Speech
+        </div>
+      </div>
     </div>
 
     <div class="file-list" id="file-list">
-      <div class="empty-state" style="padding:20px;font-size:10px;color:var(--text-dim);text-align:center;">
-        No files loaded.<br>Drop audio files below.
+      <div style="padding:20px 16px;font-size:12px;color:var(--text-dim);line-height:1.7;">
+        Loading file list…
       </div>
     </div>
 
-    <div class="drop-zone" id="drop-zone">
-      <div class="drop-icon">🎙</div>
-      Drop .wav files here<br>
-      <span style="font-size:9px;opacity:0.6">or click Load Files above</span>
-    </div>
+    <div class="sidebar-footer" id="sidebar-footer">—</div>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="content" id="main-content">
+  <!-- CONTENT -->
+  <div class="content" id="content">
 
-    <!-- EMPTY STATE -->
-    <div class="empty-state" id="empty-state">
-      <div class="big-icon">📊</div>
-      <div>No file selected</div>
-      <div style="font-size:10px;opacity:0.6;margin-top:4px">Load .wav files and select one to analyze</div>
-      <div style="font-size:9px;opacity:0.4;margin-top:8px;letter-spacing:1px">
-        FILENAME FORMAT: S{id}_{gender}_{type}_{article}_{rec}.wav<br>
-        MC = Cough · MB = Breath · MS = Speech
-      </div>
+    <!-- Config warning -->
+    <div class="config-banner" id="config-banner">
+      ⚠️ <span>
+        Edit <strong>GITHUB_USER</strong>, <strong>GITHUB_REPO</strong>,
+        <strong>AUDIO_FOLDER</strong> and <strong>FILES</strong> in the
+        <code>CONFIG</code> block at the top of this file before deploying.
+      </span>
     </div>
 
-    <!-- ANALYSIS VIEW -->
+    <!-- Empty state -->
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">📊</div>
+      <div class="empty-title">No file selected</div>
+      <div class="empty-desc">Choose a recording from the sidebar to view its waveform and spectrogram.</div>
+    </div>
+
+    <!-- Analysis view -->
     <div id="analysis-view" class="hidden" style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;">
 
-      <!-- Info Card -->
-      <div class="info-card" id="info-card">
+      <!-- Info strip -->
+      <div class="info-strip">
         <div class="info-field">
           <div class="info-label">Subject</div>
-          <div class="info-value" id="info-subject">—</div>
+          <div class="info-value" id="i-subject">—</div>
         </div>
-        <div class="info-divider"></div>
+        <div class="info-sep"></div>
         <div class="info-field">
           <div class="info-label">Gender</div>
-          <div class="info-value" id="info-gender">—</div>
+          <div class="info-value" id="i-gender">—</div>
         </div>
-        <div class="info-divider"></div>
+        <div class="info-sep"></div>
         <div class="info-field">
           <div class="info-label">Type</div>
-          <div class="info-value" id="info-type">—</div>
+          <div class="info-value" id="i-type">—</div>
         </div>
-        <div class="info-divider"></div>
+        <div class="info-sep"></div>
         <div class="info-field">
           <div class="info-label">Article</div>
-          <div class="info-value" id="info-article">—</div>
+          <div class="info-value" id="i-article">—</div>
         </div>
-        <div class="info-divider"></div>
-        <div class="info-field">
-          <div class="info-label">Recording</div>
-          <div class="info-value" id="info-rec">—</div>
-        </div>
-        <div class="info-divider"></div>
+        <div class="info-sep"></div>
         <div class="info-field">
           <div class="info-label">Sample Rate</div>
-          <div class="info-value" id="info-sr">—</div>
+          <div class="info-value" id="i-sr">—</div>
         </div>
-        <div class="info-divider"></div>
+        <div class="info-sep"></div>
         <div class="info-field">
           <div class="info-label">Duration</div>
-          <div class="info-value" id="info-dur">—</div>
+          <div class="info-value" id="i-dur">—</div>
         </div>
-        <div class="filename-display" id="info-filename">—</div>
+        <div class="info-sep"></div>
+        <div class="info-field">
+          <div class="info-label">File Size</div>
+          <div class="info-value" id="i-size">—</div>
+        </div>
+        <div class="info-filename" id="i-filename">—</div>
       </div>
 
       <!-- Visualizations -->
       <div class="viz-grid" style="flex:1;min-height:0;">
 
         <!-- Waveform -->
-        <div class="viz-panel">
-          <div class="viz-title">
-            <span class="dot"></span>
-            Amplitude · Time Domain
-            <span class="grid-toggle" id="waveform-grid-toggle" onclick="toggleGrid('waveform')">GRID ON</span>
+        <div class="viz-card">
+          <div class="viz-header">
+            <div class="viz-indicator ind-green"></div>
+            <div class="viz-title">Amplitude</div>
+            <div class="viz-subtitle">&nbsp;· Time Domain</div>
           </div>
-          <div class="loading-overlay hidden" id="waveform-loading">
+          <div class="loading-overlay hidden" id="wf-loading">
             <div class="spinner"></div>
-            <span>COMPUTING WAVEFORM</span>
+            Computing waveform…
           </div>
-          <div class="canvas-wrap" id="waveform-wrap">
-            <canvas id="waveform-canvas"></canvas>
-            <div class="y-axis" id="waveform-yaxis">
-              <span>+1.0</span><span>+0.5</span><span>0</span><span>-0.5</span><span>-1.0</span>
+          <div class="viz-body" id="wf-body">
+            <canvas id="wf-canvas"></canvas>
+            <div class="y-axis" id="wf-yaxis">
+              <span>+1.0</span><span>+0.5</span><span>0</span><span>−0.5</span><span>−1.0</span>
             </div>
-            <div class="x-axis" id="waveform-xaxis"></div>
-            <!-- Position line -->
-            <div id="waveform-pos" style="position:absolute;top:0;bottom:0;width:1px;background:var(--amber);opacity:0.8;pointer-events:none;left:0;"></div>
+            <div class="x-axis" id="wf-xaxis"></div>
+            <div class="pos-line" id="wf-pos"></div>
           </div>
         </div>
 
         <!-- Spectrogram -->
-        <div class="viz-panel">
-          <div class="viz-title">
-            <span class="dot dot-amber"></span>
-            Frequency · Time Domain (Spectrogram)
-            <span class="grid-toggle" id="spectrogram-grid-toggle" onclick="toggleGrid('spectrogram')">GRID ON</span>
+        <div class="viz-card">
+          <div class="viz-header">
+            <div class="viz-indicator ind-amber"></div>
+            <div class="viz-title">Spectrogram</div>
+            <div class="viz-subtitle">&nbsp;· Frequency × Time (Viridis)</div>
           </div>
-          <div class="loading-overlay hidden" id="spectrogram-loading">
+          <div class="loading-overlay hidden" id="sp-loading">
             <div class="spinner"></div>
-            <span>COMPUTING FFT</span>
+            Computing FFT…
           </div>
-          <div class="canvas-wrap" id="spectrogram-wrap">
-            <canvas id="spectrogram-canvas"></canvas>
-            <div class="y-axis" id="spec-yaxis"></div>
-            <div class="x-axis" id="spec-xaxis"></div>
-            <div class="color-bar-wrap">
-              <canvas id="color-bar-canvas"></canvas>
+          <div class="viz-body" id="sp-body">
+            <canvas id="sp-canvas"></canvas>
+            <div class="y-axis" id="sp-yaxis"></div>
+            <div class="x-axis" id="sp-xaxis"></div>
+            <div class="colorbar-wrap">
+              <canvas id="cb-canvas"></canvas>
             </div>
-            <!-- Position line -->
-            <div id="spectrogram-pos" style="position:absolute;top:0;bottom:0;width:1px;background:var(--amber);opacity:0.8;pointer-events:none;left:0;"></div>
+            <div class="pos-line" id="sp-pos"></div>
           </div>
         </div>
 
       </div>
 
-      <!-- Audio Player -->
+      <!-- Player -->
       <div class="player-bar">
         <button class="play-btn" id="play-btn" onclick="togglePlay()">▶</button>
         <div class="time-display" id="time-display">0:00 / 0:00</div>
@@ -719,591 +568,370 @@
           <div class="progress-fill" id="progress-fill"></div>
         </div>
         <div class="vol-wrap">
-          <span class="vol-icon">🔊</span>
-          <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="0.8" oninput="setVolume(this.value)">
+          <span>🔊</span>
+          <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="0.85"
+                 oninput="document.getElementById('audio-el').volume=this.value">
         </div>
-        <audio id="audio-player" class="audio-hidden"></audio>
       </div>
 
     </div>
   </div>
-
 </div>
 
+<audio id="audio-el"></audio>
+
 <script>
-// =============================================
-// FFT (Cooley-Tukey, in-place, radix-2)
-// =============================================
+/* ── FFT (Cooley-Tukey radix-2) ───────────────────── */
 function fft(re, im) {
   const n = re.length;
-  // Bit-reversal permutation
-  for (let i = 1, j = 0; i < n; i++) {
-    let bit = n >> 1;
-    for (; j & bit; bit >>= 1) j ^= bit;
-    j ^= bit;
-    if (i < j) {
-      let t = re[i]; re[i] = re[j]; re[j] = t;
-      t = im[i]; im[i] = im[j]; im[j] = t;
-    }
+  for (let i=1,j=0; i<n; i++) {
+    let bit=n>>1; for (;j&bit;bit>>=1) j^=bit; j^=bit;
+    if (i<j) { let t=re[i];re[i]=re[j];re[j]=t; t=im[i];im[i]=im[j];im[j]=t; }
   }
-  // Butterfly
-  for (let len = 2; len <= n; len <<= 1) {
-    const ang = -2 * Math.PI / len;
-    const wRe = Math.cos(ang), wIm = Math.sin(ang);
-    for (let i = 0; i < n; i += len) {
-      let cr = 1, ci = 0;
-      for (let j = 0; j < len >> 1; j++) {
-        const uR = re[i+j], uI = im[i+j];
-        const vR = re[i+j+(len>>1)]*cr - im[i+j+(len>>1)]*ci;
-        const vI = re[i+j+(len>>1)]*ci + im[i+j+(len>>1)]*cr;
-        re[i+j] = uR+vR; im[i+j] = uI+vI;
-        re[i+j+(len>>1)] = uR-vR; im[i+j+(len>>1)] = uI-vI;
-        const nr = cr*wRe - ci*wIm;
-        ci = cr*wIm + ci*wRe; cr = nr;
+  for (let len=2;len<=n;len<<=1) {
+    const ang=-2*Math.PI/len, wR=Math.cos(ang), wI=Math.sin(ang);
+    for (let i=0;i<n;i+=len) {
+      let cr=1,ci=0;
+      for (let j=0;j<len>>1;j++) {
+        const uR=re[i+j],uI=im[i+j];
+        const vR=re[i+j+(len>>1)]*cr-im[i+j+(len>>1)]*ci;
+        const vI=re[i+j+(len>>1)]*ci+im[i+j+(len>>1)]*cr;
+        re[i+j]=uR+vR;im[i+j]=uI+vI;
+        re[i+j+(len>>1)]=uR-vR;im[i+j+(len>>1)]=uI-vI;
+        const nr=cr*wR-ci*wI;ci=cr*wI+ci*wR;cr=nr;
       }
     }
   }
 }
 
-// =============================================
-// INFERNO COLORMAP
-// =============================================
-const INFERNO_KEYS = [
-  [0,   [0, 0, 4]],
-  [0.13,[31, 12, 72]],
-  [0.26,[85, 15, 109]],
-  [0.4, [158, 47, 87]],
-  [0.55,[212, 94, 46]],
-  [0.7, [241, 150, 11]],
-  [0.85,[253, 210, 41]],
-  [1.0, [252, 255, 164]]
+/* ── VIRIDIS COLORMAP ─────────────────────────────── */
+const VIR=[
+  [0,[68,1,84]],[0.13,[71,44,122]],[0.25,[59,82,139]],
+  [0.38,[44,113,142]],[0.5,[33,144,140]],[0.63,[39,173,129]],
+  [0.75,[92,200,99]],[0.88,[170,220,50]],[1,[253,231,37]]
 ];
-
-function inferno(v) {
-  v = Math.max(0, Math.min(1, v));
-  let i = 0;
-  while (i < INFERNO_KEYS.length - 2 && INFERNO_KEYS[i+1][0] < v) i++;
-  const [t0, c0] = INFERNO_KEYS[i];
-  const [t1, c1] = INFERNO_KEYS[i+1];
-  const t = (v - t0) / (t1 - t0);
-  return [
-    Math.round(c0[0] + t*(c1[0]-c0[0])),
-    Math.round(c0[1] + t*(c1[1]-c0[1])),
-    Math.round(c0[2] + t*(c1[2]-c0[2]))
-  ];
+function viridis(v) {
+  v=Math.max(0,Math.min(1,v));
+  let i=0; while(i<VIR.length-2&&VIR[i+1][0]<v) i++;
+  const [t0,c0]=VIR[i],[t1,c1]=VIR[i+1],t=(v-t0)/(t1-t0);
+  return [Math.round(c0[0]+t*(c1[0]-c0[0])),Math.round(c0[1]+t*(c1[1]-c0[1])),Math.round(c0[2]+t*(c1[2]-c0[2]))];
 }
 
-// =============================================
-// PARSE FILENAME
-// =============================================
-function parseFilename(name) {
-  // S120_GF_MS_A26_R01.wav
-  const base = name.replace(/\.wav$/i, '');
-  const parts = base.split('_');
-  const gender_map = { GF: 'Female', GM: 'Male' };
-  const type_map = { MC: 'Cough', MB: 'Breath', MS: 'Speech' };
+/* ── PARSE FILENAME ───────────────────────────────── */
+function parseFn(name) {
+  const p=name.replace(/\.wav$/i,'').split('_');
   return {
-    subject: parts[0] || '?',
-    gender: gender_map[parts[1]] || parts[1] || '?',
-    genderCode: parts[1] || '?',
-    type: type_map[parts[2]] || parts[2] || '?',
-    typeCode: parts[2] || '?',
-    article: parts[3] || '?',
-    recording: parts[4] || '?',
+    subject: p[0]||'?',
+    gender:  ({GF:'Female',GM:'Male'})[p[1]]||p[1]||'?',
+    typeCode: p[2]||'?',
+    type:    ({MC:'Cough',MB:'Breath',MS:'Speech'})[p[2]]||p[2]||'?',
+    article: p[3]||'?',
+    rec:     p[4]||'?',
   };
 }
 
-// =============================================
-// STATE
-// =============================================
-let files = {}; // key: filename, value: {file, objectUrl, buffer, meta}
-let currentFile = null;
-let audioCtx = null;
-let decodedBuffer = null;
-let showGrid = { waveform: true, spectrogram: true };
-let animFrameId = null;
-let duration = 0;
+function fmtTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
+function fmtBytes(b) { return b>1e6?(b/1e6).toFixed(1)+' MB':(b/1024).toFixed(0)+' KB'; }
 
-// =============================================
-// FILE LOADING
-// =============================================
-document.getElementById('file-input').addEventListener('change', e => handleFiles(e.target.files));
-
-const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('drag-over');
-  handleFiles(e.dataTransfer.files);
-});
-dropZone.addEventListener('click', () => document.getElementById('file-input').click());
-
-function handleFiles(fileList) {
-  for (const f of fileList) {
-    if (!f.name.match(/\.wav$/i)) continue;
-    if (files[f.name]) URL.revokeObjectURL(files[f.name].objectUrl);
-    const objectUrl = URL.createObjectURL(f);
-    const meta = parseFilename(f.name);
-    files[f.name] = { file: f, objectUrl, buffer: null, meta };
-  }
-  renderFileList();
+function setStatus(s,type) {
+  const el=document.getElementById('status-pill');
+  el.textContent=s;
+  el.className='pill'+(type==='ok'?' ok':type==='err'?' err':'');
 }
 
-function renderFileList() {
-  const list = document.getElementById('file-list');
-  const count = Object.keys(files).length;
-  document.getElementById('file-count').textContent = `${count} file${count !== 1 ? 's' : ''}`;
+/* ── BUILD SIDEBAR ────────────────────────────────── */
+function buildSidebar() {
+  const uncfg = CONFIG.GITHUB_USER==='YOUR_USERNAME'||CONFIG.GITHUB_REPO==='YOUR_REPO';
+  if (uncfg) document.getElementById('config-banner').style.display='flex';
 
-  if (count === 0) {
-    list.innerHTML = `<div class="empty-state" style="padding:20px;font-size:10px;color:var(--text-dim);text-align:center;">No files loaded.</div>`;
-    return;
+  const files=CONFIG.FILES;
+  document.getElementById('file-count-pill').textContent=`${files.length} file${files.length!==1?'s':''}`;
+  document.getElementById('sidebar-footer').textContent=`github.com/${CONFIG.GITHUB_USER}/${CONFIG.GITHUB_REPO}`;
+
+  const groups={};
+  for (const name of files) {
+    const m=parseFn(name);
+    if(!groups[m.subject]) groups[m.subject]=[];
+    groups[m.subject].push({name,m});
   }
 
-  // Group by subject
-  const groups = {};
-  for (const [name, f] of Object.entries(files)) {
-    const subj = f.meta.subject;
-    if (!groups[subj]) groups[subj] = [];
-    groups[subj].push({ name, f });
-  }
-
-  list.innerHTML = '';
-  for (const [subj, items] of Object.entries(groups).sort()) {
-    const g = document.createElement('div');
-    g.className = 'subject-group';
-    g.innerHTML = `<div class="subject-label">${subj}</div>`;
-    items.sort((a,b) => a.name.localeCompare(b.name));
-    for (const { name, f } of items) {
-      const d = document.createElement('div');
-      d.className = `file-item${currentFile === name ? ' active' : ''}`;
-      d.dataset.name = name;
-      d.innerHTML = `<span class="type-badge type-${f.meta.typeCode}">${f.meta.typeCode}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.meta.article}</span>`;
-      d.title = name;
-      d.onclick = () => selectFile(name);
+  const list=document.getElementById('file-list');
+  list.innerHTML='';
+  for (const [subj,items] of Object.entries(groups).sort()) {
+    const g=document.createElement('div');
+    g.className='subject-group';
+    g.innerHTML=`<div class="subject-heading">${subj}</div>`;
+    items.sort((a,b)=>a.name.localeCompare(b.name));
+    for (const {name,m} of items) {
+      const d=document.createElement('div');
+      d.className='file-item'; d.dataset.name=name;
+      d.innerHTML=`<span class="type-chip chip-${m.typeCode}">${m.typeCode}</span>
+                   <span class="file-label" title="${name}">${m.article} · ${m.rec}</span>`;
+      d.onclick=()=>selectFile(name,m);
       g.appendChild(d);
     }
     list.appendChild(g);
   }
 }
 
-// =============================================
-// SELECT & ANALYZE FILE
-// =============================================
-async function selectFile(name) {
-  if (currentFile === name) return;
-  currentFile = name;
-  renderFileList();
+/* ── SELECT & LOAD FILE ───────────────────────────── */
+let audioCtx=null, decodedBuffer=null, currentName=null, duration=0, animId=null;
 
-  const entry = files[name];
+async function selectFile(name, m) {
+  if (currentName===name) return;
+  currentName=name;
+  document.querySelectorAll('.file-item').forEach(el=>el.classList.toggle('active',el.dataset.name===name));
+
   document.getElementById('empty-state').classList.add('hidden');
-  const av = document.getElementById('analysis-view');
-  av.classList.remove('hidden');
-  av.style.display = 'flex';
+  const av=document.getElementById('analysis-view');
+  av.classList.remove('hidden'); av.style.display='flex';
 
-  // Info card
-  const m = entry.meta;
-  document.getElementById('info-subject').textContent = m.subject;
-  document.getElementById('info-gender').textContent = m.gender + ' (' + m.genderCode + ')';
-  document.getElementById('info-type').textContent = m.type;
-  document.getElementById('info-type').className = `info-value colored-${m.typeCode.toLowerCase()}`;
-  document.getElementById('info-article').textContent = m.article;
-  document.getElementById('info-rec').textContent = m.recording;
-  document.getElementById('info-filename').textContent = name;
+  // Info
+  document.getElementById('i-subject').textContent=m.subject;
+  document.getElementById('i-gender').textContent=m.gender;
+  document.getElementById('i-type').textContent=m.type;
+  document.getElementById('i-type').className=`info-value v-${m.typeCode.toLowerCase()}`;
+  document.getElementById('i-article').textContent=m.article;
+  document.getElementById('i-sr').textContent='…';
+  document.getElementById('i-dur').textContent='…';
+  document.getElementById('i-size').textContent='…';
+  document.getElementById('i-filename').textContent=name;
 
-  // Audio element
-  const audio = document.getElementById('audio-player');
-  if (audio.src) {
-    audio.pause();
-    audio.currentTime = 0;
-  }
-  audio.src = entry.objectUrl;
-  audio.volume = parseFloat(document.getElementById('vol-slider').value);
-  document.getElementById('play-btn').textContent = '▶';
-  document.getElementById('progress-fill').style.width = '0%';
-  document.getElementById('time-display').textContent = '0:00 / 0:00';
+  // Reset player
+  const ae=document.getElementById('audio-el');
+  ae.pause(); ae.src='';
+  document.getElementById('play-btn').textContent='▶';
+  document.getElementById('progress-fill').style.width='0%';
+  document.getElementById('time-display').textContent='0:00 / 0:00';
+  cancelAnimationFrame(animId);
 
-  // Decode audio
-  setStatus('DECODING');
-  document.getElementById('waveform-loading').classList.remove('hidden');
-  document.getElementById('spectrogram-loading').classList.remove('hidden');
+  document.getElementById('wf-loading').classList.remove('hidden');
+  document.getElementById('sp-loading').classList.remove('hidden');
+  setStatus('Fetching…');
 
+  const url=rawUrl(name);
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const arrayBuf = await entry.file.arrayBuffer();
-    decodedBuffer = await audioCtx.decodeAudioData(arrayBuf);
+    const resp=await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} — Check filename, folder, and repo settings.`);
+    const blob=await resp.blob();
+    document.getElementById('i-size').textContent=fmtBytes(blob.size);
 
-    const sr = decodedBuffer.sampleRate;
-    duration = decodedBuffer.duration;
-    document.getElementById('info-sr').textContent = sr.toLocaleString() + ' Hz';
-    document.getElementById('info-dur').textContent = duration.toFixed(2) + ' s';
+    const arrayBuf=await blob.arrayBuffer();
+    ae.src=URL.createObjectURL(blob);
+    ae.volume=parseFloat(document.getElementById('vol-slider').value);
 
-    // Build x-axis time labels
-    buildTimeAxis('waveform-xaxis', duration);
-    buildTimeAxis('spec-xaxis', duration);
-    buildFreqAxis(sr);
+    setStatus('Decoding…');
+    if (!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    decodedBuffer=await audioCtx.decodeAudioData(arrayBuf.slice(0));
+    duration=decodedBuffer.duration;
 
-    // Draw waveform
-    await drawWaveform(decodedBuffer);
-    document.getElementById('waveform-loading').classList.add('hidden');
+    const sr=decodedBuffer.sampleRate;
+    document.getElementById('i-sr').textContent=sr.toLocaleString()+' Hz';
+    document.getElementById('i-dur').textContent=duration.toFixed(2)+' s';
 
-    // Draw spectrogram
+    buildTimeAxis('wf-xaxis',duration);
+    buildTimeAxis('sp-xaxis',duration);
+    buildFreqAxis('sp-yaxis',sr);
+
+    setStatus('Rendering…');
+    await drawWaveform(decodedBuffer, m.typeCode);
+    document.getElementById('wf-loading').classList.add('hidden');
+
     await drawSpectrogram(decodedBuffer);
-    document.getElementById('spectrogram-loading').classList.add('hidden');
-
-    setStatus('READY');
-  } catch (err) {
+    document.getElementById('sp-loading').classList.add('hidden');
+    setStatus('Ready','ok');
+  } catch(err) {
     console.error(err);
-    setStatus('ERROR');
-    document.getElementById('waveform-loading').classList.add('hidden');
-    document.getElementById('spectrogram-loading').classList.add('hidden');
+    document.getElementById('wf-loading').classList.add('hidden');
+    document.getElementById('sp-loading').classList.add('hidden');
+    setStatus('Error','err');
+    alert(`Could not load "${name}".\nURL tried: ${url}\n\nError: ${err.message}\n\nCheck:\n• GITHUB_USER, GITHUB_REPO, AUDIO_FOLDER in CONFIG\n• File exists in your repo\n• Repo is public`);
   }
 }
 
-function buildTimeAxis(id, dur) {
-  const el = document.getElementById(id);
-  const steps = 6;
-  el.innerHTML = '';
-  for (let i = 0; i <= steps; i++) {
-    const t = (dur * i / steps).toFixed(1);
-    const s = document.createElement('span');
-    s.textContent = t + 's';
+/* ── AXES ─────────────────────────────────────────── */
+function buildTimeAxis(id,dur) {
+  const el=document.getElementById(id); el.innerHTML='';
+  for(let i=0;i<=6;i++){const s=document.createElement('span');s.textContent=(dur*i/6).toFixed(1)+'s';el.appendChild(s);}
+}
+
+function buildFreqAxis(id,sr) {
+  const nyq=sr/2,el=document.getElementById(id); el.innerHTML='';
+  [nyq,nyq*0.75,nyq*0.5,nyq*0.25,0].forEach(v=>{
+    const s=document.createElement('span');
+    s.textContent=v>=1000?(v/1000).toFixed(1)+'k':v.toFixed(0);
     el.appendChild(s);
-  }
-}
-
-function buildFreqAxis(sr) {
-  const nyquist = sr / 2;
-  const el = document.getElementById('spec-yaxis');
-  el.innerHTML = '';
-  const vals = [nyquist, nyquist*0.75, nyquist*0.5, nyquist*0.25, 0];
-  for (const v of vals) {
-    const s = document.createElement('span');
-    s.textContent = v >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(0);
-    el.appendChild(s);
-  }
-}
-
-// =============================================
-// DRAW WAVEFORM
-// =============================================
-function drawWaveform(buffer) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const canvas = document.getElementById('waveform-canvas');
-      const wrap = document.getElementById('waveform-wrap');
-      const dpr = window.devicePixelRatio || 1;
-      const W = wrap.clientWidth;
-      const H = wrap.clientHeight;
-      canvas.width = W * dpr;
-      canvas.height = H * dpr;
-
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, W, H);
-
-      const data = buffer.getChannelData(0);
-      const N = data.length;
-      const padL = 36, padB = 16;
-      const w = W - padL, h = H - padB;
-
-      // Background
-      ctx.fillStyle = '#070b14';
-      ctx.fillRect(0, 0, W, H);
-
-      // Grid
-      if (showGrid.waveform) drawGrid(ctx, padL, 0, w, h, 6, 5, 'rgba(30,48,80,0.6)');
-
-      // Zero line
-      ctx.strokeStyle = 'rgba(0,212,255,0.2)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(padL, h/2);
-      ctx.lineTo(W, h/2);
-      ctx.stroke();
-
-      // Waveform (filled)
-      const samplesPerPx = N / w;
-      ctx.fillStyle = 'rgba(0,255,136,0.15)';
-      ctx.beginPath();
-      ctx.moveTo(padL, h/2);
-      for (let px = 0; px < w; px++) {
-        const start = Math.floor(px * samplesPerPx);
-        const end = Math.min(Math.floor((px+1) * samplesPerPx), N);
-        let maxV = 0, minV = 0;
-        for (let s = start; s < end; s++) {
-          if (data[s] > maxV) maxV = data[s];
-          if (data[s] < minV) minV = data[s];
-        }
-        const yMax = h/2 - maxV * (h/2);
-        const yMin = h/2 - minV * (h/2);
-        ctx.lineTo(padL + px, yMax);
-        ctx.lineTo(padL + px, yMin);
-      }
-      ctx.lineTo(W, h/2);
-      ctx.closePath();
-      ctx.fill();
-
-      // Waveform outline top
-      ctx.strokeStyle = '#00ff88';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      for (let px = 0; px < w; px++) {
-        const start = Math.floor(px * samplesPerPx);
-        const end = Math.min(Math.floor((px+1) * samplesPerPx), N);
-        let maxV = -1;
-        for (let s = start; s < end; s++) if (data[s] > maxV) maxV = data[s];
-        const y = h/2 - maxV * (h/2);
-        px === 0 ? ctx.moveTo(padL + px, y) : ctx.lineTo(padL + px, y);
-      }
-      ctx.stroke();
-
-      resolve();
-    }, 10);
   });
 }
 
-function drawGrid(ctx, x0, y0, w, h, cols, rows, color) {
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i <= cols; i++) {
-    const x = x0 + (i/cols)*w;
-    ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, h); ctx.stroke();
-  }
-  for (let i = 0; i <= rows; i++) {
-    const y = y0 + (i/rows)*h;
-    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x0+w, y); ctx.stroke();
-  }
+/* ── WAVEFORM ─────────────────────────────────────── */
+const TYPE_COLORS={MC:'#c0392b',MB:'#1a7a5e',MS:'#3a6bc4'};
+
+function drawWaveform(buf,typeCode) {
+  return new Promise(resolve=>setTimeout(()=>{
+    const canvas=document.getElementById('wf-canvas');
+    const wrap=document.getElementById('wf-body');
+    const dpr=window.devicePixelRatio||1;
+    const W=wrap.clientWidth,H=wrap.clientHeight;
+    canvas.width=W*dpr; canvas.height=H*dpr;
+    const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+
+    const data=buf.getChannelData(0);
+    const N=data.length, padL=38,padB=18, w=W-padL,h=H-padB;
+    const color=TYPE_COLORS[typeCode]||'#3a6bc4';
+
+    // Background
+    ctx.fillStyle='#f9fafb'; ctx.fillRect(0,0,W,H);
+
+    // Grid
+    ctx.strokeStyle='rgba(200,205,215,0.7)'; ctx.lineWidth=0.5;
+    for(let i=0;i<=6;i++){const x=padL+i/6*w;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(let i=0;i<=4;i++){const y=i/4*h;ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    // Zero line
+    ctx.strokeStyle='rgba(100,120,160,0.3)'; ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,h/2);ctx.lineTo(W,h/2);ctx.stroke();
+
+    // Fill
+    const spx=N/w;
+    ctx.fillStyle=color+'22';
+    ctx.beginPath(); ctx.moveTo(padL,h/2);
+    for(let px=0;px<w;px++){
+      const s0=Math.floor(px*spx),s1=Math.min(Math.floor((px+1)*spx),N);
+      let mx=0,mn=0; for(let s=s0;s<s1;s++){if(data[s]>mx)mx=data[s];if(data[s]<mn)mn=data[s];}
+      ctx.lineTo(padL+px,h/2-mx*(h/2)); ctx.lineTo(padL+px,h/2-mn*(h/2));
+    }
+    ctx.lineTo(W,h/2); ctx.closePath(); ctx.fill();
+
+    // Envelope line
+    ctx.strokeStyle=color; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(let px=0;px<w;px++){
+      const s0=Math.floor(px*spx),s1=Math.min(Math.floor((px+1)*spx),N);
+      let mx=-1; for(let s=s0;s<s1;s++) if(data[s]>mx) mx=data[s];
+      px===0?ctx.moveTo(padL+px,h/2-mx*(h/2)):ctx.lineTo(padL+px,h/2-mx*(h/2));
+    }
+    ctx.stroke();
+    resolve();
+  },10));
 }
 
-// =============================================
-// DRAW SPECTROGRAM
-// =============================================
-function drawSpectrogram(buffer) {
-  return new Promise(resolve => {
-    setTimeout(async () => {
-      const canvas = document.getElementById('spectrogram-canvas');
-      const wrap = document.getElementById('spectrogram-wrap');
-      const dpr = window.devicePixelRatio || 1;
-      const W = wrap.clientWidth;
-      const H = wrap.clientHeight;
-      canvas.width = W * dpr;
-      canvas.height = H * dpr;
+/* ── SPECTROGRAM ──────────────────────────────────── */
+function drawSpectrogram(buf) {
+  return new Promise(resolve=>setTimeout(()=>{
+    const canvas=document.getElementById('sp-canvas');
+    const wrap=document.getElementById('sp-body');
+    const dpr=window.devicePixelRatio||1;
+    const W=wrap.clientWidth,H=wrap.clientHeight;
+    canvas.width=W*dpr; canvas.height=H*dpr;
+    const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
 
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
+    const data=buf.getChannelData(0), N=data.length;
+    const padL=38,padB=18, w=W-padL-22, h=H-padB;
 
-      const data = buffer.getChannelData(0);
-      const N = data.length;
-      const padL = 36, padB = 16;
-      const w = W - padL - 18; // leave space for colorbar
-      const h = H - padB;
+    ctx.fillStyle='#1c1c2a'; ctx.fillRect(0,0,W,H);
 
-      ctx.fillStyle = '#000';
-      ctx.fillRect(0, 0, W, H);
+    const FFT_SIZE=1024;
+    const hop=Math.max(FFT_SIZE>>2,Math.floor(N/Math.max(w,300)));
+    const numFrames=Math.floor((N-FFT_SIZE)/hop);
+    const freqBins=FFT_SIZE/2;
 
-      const FFT_SIZE = 1024;
-      const hopSize = Math.max(FFT_SIZE >> 2, Math.floor(N / Math.max(w, 400)));
-      const numFrames = Math.floor((N - FFT_SIZE) / hopSize);
-      const freqBins = FFT_SIZE / 2;
+    const hann=new Float32Array(FFT_SIZE);
+    for(let i=0;i<FFT_SIZE;i++) hann[i]=0.5*(1-Math.cos(2*Math.PI*i/(FFT_SIZE-1)));
 
-      // Pre-compute Hann window
-      const hann = new Float32Array(FFT_SIZE);
-      for (let i = 0; i < FFT_SIZE; i++) hann[i] = 0.5*(1 - Math.cos(2*Math.PI*i/(FFT_SIZE-1)));
+    // Global max (sampled)
+    let gMax=1e-10;
+    const step=Math.max(1,Math.floor(numFrames/40));
+    const re=new Float64Array(FFT_SIZE),im=new Float64Array(FFT_SIZE);
+    for(let fi=0;fi<numFrames;fi+=step){
+      const off=fi*hop; re.fill(0);im.fill(0);
+      for(let k=0;k<FFT_SIZE;k++) re[k]=(data[off+k]||0)*hann[k];
+      fft(re,im);
+      for(let k=0;k<freqBins;k++){const m=Math.sqrt(re[k]*re[k]+im[k]*im[k]);if(m>gMax)gMax=m;}
+    }
+    const logMax=Math.log10(gMax+1e-10),logMin=logMax-4;
 
-      // ImageData for fast pixel drawing
-      const imgW = Math.min(numFrames, w), imgH = h;
-      const imgData = ctx.createImageData(imgW, imgH);
-      const px = imgData.data;
+    const imgW=Math.min(numFrames,w),imgH=h;
+    const imgData=ctx.createImageData(imgW,imgH),px=imgData.data;
 
-      // Find global max for normalization (sample frames)
-      let globalMax = 1e-10;
-      const sampleStep = Math.max(1, Math.floor(numFrames / 50));
-      for (let fi = 0; fi < numFrames; fi += sampleStep) {
-        const re = new Float64Array(FFT_SIZE), im = new Float64Array(FFT_SIZE);
-        const off = fi * hopSize;
-        for (let k = 0; k < FFT_SIZE; k++) re[k] = (data[off+k] || 0) * hann[k];
-        fft(re, im);
-        for (let k = 0; k < freqBins; k++) {
-          const mag = Math.sqrt(re[k]*re[k] + im[k]*im[k]);
-          if (mag > globalMax) globalMax = mag;
-        }
+    for(let fi=0;fi<numFrames&&fi<imgW;fi++){
+      const off=fi*hop; re.fill(0);im.fill(0);
+      for(let k=0;k<FFT_SIZE;k++) re[k]=(data[off+k]||0)*hann[k];
+      fft(re,im);
+      for(let bin=0;bin<freqBins;bin++){
+        const mag=Math.sqrt(re[bin]*re[bin]+im[bin]*im[bin]);
+        const v=Math.max(0,Math.min(1,(Math.log10(mag+1e-10)-logMin)/(logMax-logMin)));
+        const [r,g,b]=viridis(v);
+        const y=Math.floor((1-bin/freqBins)*(imgH-1));
+        const idx=(y*imgW+fi)*4;
+        px[idx]=r;px[idx+1]=g;px[idx+2]=b;px[idx+3]=255;
       }
-      const logMax = Math.log10(globalMax + 1e-10);
-      const logMin = logMax - 4; // 80 dB range
+    }
+    ctx.putImageData(imgData,padL,0);
 
-      // Compute and paint each frame
-      const re = new Float64Array(FFT_SIZE), im = new Float64Array(FFT_SIZE);
-      for (let fi = 0; fi < numFrames && fi < imgW; fi++) {
-        const off = fi * hopSize;
-        re.fill(0); im.fill(0);
-        for (let k = 0; k < FFT_SIZE; k++) re[k] = (data[off+k] || 0) * hann[k];
-        fft(re, im);
+    // Grid overlay
+    ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=0.5;
+    for(let i=0;i<=6;i++){const x=padL+i/6*w;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(let i=0;i<=4;i++){const y=i/4*h;ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+w,y);ctx.stroke();}
 
-        for (let bin = 0; bin < freqBins; bin++) {
-          const mag = Math.sqrt(re[bin]*re[bin] + im[bin]*im[bin]);
-          const logMag = Math.log10(mag + 1e-10);
-          const v = Math.max(0, Math.min(1, (logMag - logMin) / (logMax - logMin)));
-          const [r,g,b] = inferno(v);
-          // Frequency axis: bin 0 = DC (bottom), bin freqBins-1 = Nyquist (top)
-          const y = Math.floor((1 - bin / freqBins) * (imgH-1));
-          const idx = (y * imgW + fi) * 4;
-          px[idx] = r; px[idx+1] = g; px[idx+2] = b; px[idx+3] = 255;
-        }
-      }
+    // Color bar
+    const cb=document.getElementById('cb-canvas');
+    const cbW=cb.parentElement.offsetWidth,cbH=cb.parentElement.offsetHeight;
+    cb.width=cbW;cb.height=cbH;
+    const cctx=cb.getContext('2d');
+    for(let y=0;y<cbH;y++){const[r,g,b]=viridis(1-y/cbH);cctx.fillStyle=`rgb(${r},${g},${b})`;cctx.fillRect(0,y,cbW,1);}
 
-      ctx.putImageData(imgData, padL, 0);
-
-      // Grid overlay
-      if (showGrid.spectrogram) drawGrid(ctx, padL, 0, w, h, 6, 5, 'rgba(255,255,255,0.07)');
-
-      // Draw color bar
-      drawColorBar();
-
-      resolve();
-    }, 10);
-  });
+    resolve();
+  },10));
 }
 
-function drawColorBar() {
-  const canvas = document.getElementById('color-bar-canvas');
-  const wrap = canvas.parentElement;
-  canvas.width = wrap.offsetWidth;
-  canvas.height = wrap.offsetHeight;
-  const ctx = canvas.getContext('2d');
-  const H = canvas.height;
-  for (let y = 0; y < H; y++) {
-    const v = 1 - y/H;
-    const [r,g,b] = inferno(v);
-    ctx.fillStyle = `rgb(${r},${g},${b})`;
-    ctx.fillRect(0, y, canvas.width, 1);
-  }
-}
-
-// =============================================
-// GRID TOGGLE
-// =============================================
-function toggleGrid(type) {
-  showGrid[type] = !showGrid[type];
-  const btn = document.getElementById(`${type}-grid-toggle`);
-  btn.textContent = showGrid[type] ? 'GRID ON' : 'GRID OFF';
-  btn.style.color = showGrid[type] ? 'var(--text-dim)' : 'var(--red)';
-  if (decodedBuffer) {
-    if (type === 'waveform') drawWaveform(decodedBuffer);
-    else drawSpectrogram(decodedBuffer);
-  }
-}
-
-// =============================================
-// AUDIO PLAYER
-// =============================================
-const audio = document.getElementById('audio-player');
-
-audio.addEventListener('loadedmetadata', () => {
-  duration = audio.duration;
-});
-
-audio.addEventListener('ended', () => {
-  document.getElementById('play-btn').textContent = '▶';
-  cancelAnimationFrame(animFrameId);
-});
+/* ── PLAYER ───────────────────────────────────────── */
+const audioEl=document.getElementById('audio-el');
+audioEl.addEventListener('ended',()=>{document.getElementById('play-btn').textContent='▶';cancelAnimationFrame(animId);});
 
 function togglePlay() {
-  if (!currentFile) return;
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  if (audio.paused) {
-    audio.play();
-    document.getElementById('play-btn').textContent = '⏸';
-    requestAnimFrame();
-  } else {
-    audio.pause();
-    document.getElementById('play-btn').textContent = '▶';
-    cancelAnimationFrame(animFrameId);
-  }
+  if(!currentName) return;
+  if(audioCtx?.state==='suspended') audioCtx.resume();
+  if(audioEl.paused){audioEl.play();document.getElementById('play-btn').textContent='⏸';tick();}
+  else{audioEl.pause();document.getElementById('play-btn').textContent='▶';cancelAnimationFrame(animId);}
 }
 
-function requestAnimFrame() {
-  animFrameId = requestAnimationFrame(updatePosition);
+function tick(){
+  const t=audioEl.currentTime,d=audioEl.duration||duration||1,pct=t/d;
+  document.getElementById('progress-fill').style.width=(pct*100)+'%';
+  document.getElementById('time-display').textContent=`${fmtTime(t)} / ${fmtTime(d)}`;
+  const wW=document.getElementById('wf-body').clientWidth;
+  const sW=document.getElementById('sp-body').clientWidth;
+  document.getElementById('wf-pos').style.left=(38+pct*(wW-38))+'px';
+  document.getElementById('sp-pos').style.left=(38+pct*(sW-38-22))+'px';
+  if(!audioEl.paused) animId=requestAnimationFrame(tick);
 }
 
-function updatePosition() {
-  const t = audio.currentTime;
-  const d = audio.duration || duration || 1;
-  const pct = t / d;
-
-  document.getElementById('progress-fill').style.width = (pct * 100) + '%';
-  document.getElementById('time-display').textContent = `${fmtTime(t)} / ${fmtTime(d)}`;
-
-  // Position lines
-  const wWrap = document.getElementById('waveform-wrap');
-  const sWrap = document.getElementById('spectrogram-wrap');
-  const wX = 36 + pct * (wWrap.clientWidth - 36);
-  const sX = 36 + pct * (sWrap.clientWidth - 36 - 18);
-  document.getElementById('waveform-pos').style.left = wX + 'px';
-  document.getElementById('spectrogram-pos').style.left = sX + 'px';
-
-  if (!audio.paused) requestAnimFrame();
+function seekAudio(e){
+  const rect=document.getElementById('progress-wrap').getBoundingClientRect();
+  audioEl.currentTime=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width))*(audioEl.duration||0);
+  tick();
 }
 
-function seekAudio(e) {
-  const rect = document.getElementById('progress-wrap').getBoundingClientRect();
-  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  audio.currentTime = pct * (audio.duration || 0);
-  updatePosition();
-}
-
-function setVolume(v) {
-  audio.volume = parseFloat(v);
-}
-
-function fmtTime(s) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60).toString().padStart(2, '0');
-  return `${m}:${sec}`;
-}
-
-// =============================================
-// STATUS
-// =============================================
-function setStatus(s) {
-  const el = document.getElementById('status-badge');
-  el.textContent = s;
-  el.className = `badge${s === 'READY' ? ' active' : ''}`;
-}
-
-// =============================================
-// RESIZE HANDLER
-// =============================================
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    if (decodedBuffer) {
-      drawWaveform(decodedBuffer);
-      drawSpectrogram(decodedBuffer);
-    }
-  }, 200);
+['wf-canvas','sp-canvas'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{
+    const rect=e.target.getBoundingClientRect(),padL=38;
+    const pct=Math.max(0,(e.clientX-rect.left-padL)/(rect.width-padL));
+    audioEl.currentTime=pct*(audioEl.duration||0); tick();
+  });
 });
 
-// =============================================
-// CLICK ON CANVAS TO SEEK
-// =============================================
-document.getElementById('waveform-canvas').addEventListener('click', e => {
-  const rect = e.target.getBoundingClientRect();
-  const pct = Math.max(0, (e.clientX - rect.left - 36) / (rect.width - 36));
-  audio.currentTime = pct * (audio.duration || 0);
-  updatePosition();
+/* ── RESIZE ───────────────────────────────────────── */
+let resizeT;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeT);
+  resizeT=setTimeout(()=>{
+    if(decodedBuffer&&currentName){const m=parseFn(currentName);drawWaveform(decodedBuffer,m.typeCode);drawSpectrogram(decodedBuffer);}
+  },200);
 });
 
-document.getElementById('spectrogram-canvas').addEventListener('click', e => {
-  const rect = e.target.getBoundingClientRect();
-  const pct = Math.max(0, (e.clientX - rect.left - 36) / (rect.width - 36 - 18));
-  audio.currentTime = pct * (audio.duration || 0);
-  updatePosition();
-});
-
-// Draw color bar on load
-drawColorBar();
+/* ── INIT ─────────────────────────────────────────── */
+buildSidebar();
 </script>
 </body>
 </html>

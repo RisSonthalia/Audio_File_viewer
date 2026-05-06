@@ -45,11 +45,10 @@ html, body {
 body {
   display: flex;
   flex-direction: column;
-  height: 100dvh; /* dynamic viewport height for mobile */
+  height: 100dvh;
   overflow: hidden;
 }
 
-/* ═══════════════ HEADER ═══════════════ */
 header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -88,7 +87,6 @@ header {
 .pill.ok  { background:#eef7f2; border-color:#b6dfc8; color:#1a7a5e; }
 .pill.err { background:#fdf1f0; border-color:#f5c2be; color:#c0392b; }
 
-/* Hamburger */
 .menu-btn {
   display: none;
   align-items:center; justify-content:center;
@@ -99,7 +97,6 @@ header {
 }
 .menu-btn:hover { background:var(--border); }
 
-/* ═══════════════ MAIN WRAPPER ═══════════════ */
 .main {
   display: flex;
   flex: 1;
@@ -107,7 +104,6 @@ header {
   position: relative;
 }
 
-/* ═══════════════ SIDEBAR OVERLAY (mobile/tablet) ═══════════════ */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -115,10 +111,8 @@ header {
   background: rgba(0,0,0,0.35);
   z-index: 199;
 }
-
 .sidebar-overlay.open { display: block; }
 
-/* ═══════════════ SIDEBAR ═══════════════ */
 .sidebar {
   width: var(--sidebar-w);
   background: var(--surface);
@@ -195,13 +189,11 @@ header {
   word-break:break-all; line-height:1.5; flex-shrink:0;
 }
 
-/* ═══════════════ CONTENT ═══════════════ */
 .content {
   flex:1; display:flex; flex-direction:column;
   overflow:hidden; padding:14px; gap:10px; min-width:0;
 }
 
-/* CONFIG BANNER */
 .config-banner {
   background:#fffbeb; border:1px solid #fcd34d;
   border-radius:var(--radius); padding:10px 14px;
@@ -210,7 +202,6 @@ header {
   flex-shrink:0;
 }
 
-/* EMPTY STATE */
 .empty-state {
   flex:1; display:flex; flex-direction:column;
   align-items:center; justify-content:center;
@@ -226,7 +217,6 @@ header {
 .empty-title { font-size:15px; font-weight:500; color:var(--text-mid); }
 .empty-desc  { font-size:13px; max-width:280px; line-height:1.6; }
 
-/* INFO STRIP */
 .info-strip {
   background:var(--surface); border:1px solid var(--border);
   border-radius:var(--radius); padding:10px 14px;
@@ -256,7 +246,6 @@ header {
   max-width:200px; flex-shrink:0;
 }
 
-/* VIZ GRID — 2 col desktop, 1 col mobile */
 .viz-grid {
   display:grid;
   grid-template-columns: 1fr 1fr;
@@ -317,7 +306,6 @@ canvas { width:100%; height:100%; display:block; }
 }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* ═══════════════ PLAYER ═══════════════ */
 .player-bar {
   background:var(--surface); border:1px solid var(--border);
   border-radius:var(--radius); padding:10px 14px;
@@ -357,17 +345,11 @@ input[type=range]::-webkit-slider-thumb {
 audio { display:none; }
 .hidden { display:none !important; }
 
-/* ═══════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-═══════════════════════════════════════ */
-
-/* ── TABLET (≤900px) ── */
 @media (max-width: 900px) {
   .menu-btn { display:flex; }
   .brand-sub { display:none; }
-  .pill:first-of-type { display:none; } /* hide file count pill */
+  .pill:first-of-type { display:none; }
 
-  /* Sidebar becomes a fixed drawer */
   .sidebar {
     position: fixed;
     top: var(--header-h);
@@ -380,17 +362,14 @@ audio { display:none; }
   .sidebar.open { transform: translateX(0); }
   .sidebar-close { display:block; }
 
-  /* Single-column charts */
   .viz-grid { grid-template-columns: 1fr; }
 
-  /* Info strip scrolls horizontally */
   .info-strip { flex-wrap:nowrap; }
   .info-filename { display:none; }
 
   .content { padding:10px; gap:8px; }
 }
 
-/* ── MOBILE (≤560px) ── */
 @media (max-width: 560px) {
   :root { --header-h: 50px; }
 
@@ -400,25 +379,20 @@ audio { display:none; }
 
   .content { padding:8px; gap:8px; }
 
-  /* Info strip: show only key fields */
   .info-sep:nth-child(n+6) { display:none; }
   .info-field:nth-child(n+6) { display:none; }
 
-  /* Viz cards have a fixed minimum height */
   .viz-card { min-height: 200px; }
 
-  /* Player compact */
   .player-bar { padding:8px 10px; gap:8px; }
   .time-display { font-size:11px; min-width:unset; }
-  .vol-wrap { display:none; } /* hide volume on very small screens */
+  .vol-wrap { display:none; }
 
-  /* Smaller axis labels */
   .y-axis { font-size:7px; width:30px; }
   .x-axis { font-size:7px; left:30px; }
   .pos-line { left:30px; }
 }
 
-/* ── LANDSCAPE MOBILE ── */
 @media (max-width: 812px) and (orientation: landscape) {
   .viz-grid { grid-template-columns: 1fr 1fr; }
   .viz-card { min-height: 150px; }
@@ -427,7 +401,6 @@ audio { display:none; }
 </head>
 <body>
 
-<!-- ═══════════════ CONFIG ═══════════════ -->
 <script>
 const CONFIG = {
   GITHUB_USER:   "RisSonthalia",
@@ -471,7 +444,6 @@ function rawUrl(filename) {
 }
 </script>
 
-<!-- ═══════════════ HEADER ═══════════════ -->
 <header>
   <div class="brand">
     <div class="brand-logo">🫁</div>
@@ -487,13 +459,10 @@ function rawUrl(filename) {
   </div>
 </header>
 
-<!-- ═══════════════ LAYOUT ═══════════════ -->
 <div class="main">
 
-  <!-- Overlay (mobile/tablet) -->
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
-  <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-top">
       <div class="sidebar-section-title">
@@ -525,14 +494,12 @@ function rawUrl(filename) {
     <div class="sidebar-footer" id="sidebar-footer">—</div>
   </div>
 
-  <!-- CONTENT -->
   <div class="content" id="content">
 
     <div class="config-banner" id="config-banner">
       ⚠️ <span>Edit <strong>GITHUB_USER</strong>, <strong>GITHUB_REPO</strong> and <strong>FILES</strong> in the CONFIG block at the top of this file.</span>
     </div>
 
-    <!-- Empty state -->
     <div class="empty-state" id="empty-state">
       <div class="empty-icon">📊</div>
       <div class="empty-title">No file selected</div>
@@ -545,11 +512,9 @@ function rawUrl(filename) {
       </div>
     </div>
 
-    <!-- Analysis view -->
     <div id="analysis-view" class="hidden"
          style="display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;">
 
-      <!-- Info strip -->
       <div class="info-strip">
         <div class="info-field">
           <div class="info-label">Subject</div>
@@ -588,7 +553,6 @@ function rawUrl(filename) {
         <div class="info-filename" id="i-filename">—</div>
       </div>
 
-      <!-- Charts -->
       <div class="viz-grid" style="flex:1;min-height:0;">
 
         <div class="viz-card">
@@ -630,7 +594,6 @@ function rawUrl(filename) {
 
       </div>
 
-      <!-- Player -->
       <div class="player-bar">
         <button class="play-btn" id="play-btn" onclick="togglePlay()">▶</button>
         <div class="time-display" id="time-display">0:00 / 0:00</div>
@@ -650,7 +613,6 @@ function rawUrl(filename) {
 
 <audio id="audio-el"></audio>
 
-<!-- ═══════════════ SCRIPT ═══════════════ -->
 <script>
 /* ── FFT ─────────────────────────────────────────── */
 function fft(re, im) {
@@ -717,7 +679,6 @@ function closeSidebar(){
   document.getElementById('sidebar-overlay').classList.remove('open');
 }
 
-// Show mobile hint if needed
 function checkMobileHint(){
   if(window.innerWidth<=900){
     document.getElementById('mobile-hint').style.display='inline';
@@ -890,7 +851,7 @@ function drawWaveform(buf,tc){
   },10));
 }
 
-/* ── SPECTROGRAM ──────────────────────────────────── */
+/* ── SPECTROGRAM (FIXED) ──────────────────────────── */
 function drawSpectrogram(buf){
   return new Promise(resolve=>setTimeout(()=>{
     const canvas=document.getElementById('sp-canvas');
@@ -899,54 +860,86 @@ function drawSpectrogram(buf){
     const W=wrap.clientWidth,H=wrap.clientHeight;
     canvas.width=W*dpr; canvas.height=H*dpr;
     const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
-    const data=buf.getChannelData(0),N=data.length;
-    const pL=36,pB=18,w=W-pL-20,h=H-pB;
 
-    ctx.fillStyle='#1c1c2a';ctx.fillRect(0,0,W,H);
+    const data=buf.getChannelData(0),N=data.length;
+    const pL=36,pB=18,cbW=20;
+    const drawW=W-pL-cbW;   // usable width for spectrogram
+    const drawH=H-pB;       // usable height
+
+    // Fill background
+    ctx.fillStyle='#1c1c2a'; ctx.fillRect(0,0,W,H);
 
     const FFT_SIZE=1024;
-    const hop=Math.max(FFT_SIZE>>2,Math.floor(N/Math.max(w,200)));
-    const numFrames=Math.floor((N-FFT_SIZE)/hop);
     const freqBins=FFT_SIZE/2;
+
+    // Choose hop so we get enough frames to fill the display width well
+    const targetFrames=Math.max(drawW, 200);
+    const hop=Math.max(1, Math.floor((N-FFT_SIZE)/targetFrames));
+    const numFrames=Math.floor((N-FFT_SIZE)/hop)+1;
+
     const hann=new Float32Array(FFT_SIZE);
     for(let i=0;i<FFT_SIZE;i++) hann[i]=0.5*(1-Math.cos(2*Math.PI*i/(FFT_SIZE-1)));
 
+    // First pass: find global max for normalisation
     let gMax=1e-10;
-    const step=Math.max(1,Math.floor(numFrames/40));
     const re=new Float64Array(FFT_SIZE),im=new Float64Array(FFT_SIZE);
-    for(let fi=0;fi<numFrames;fi+=step){
-      const off=fi*hop;re.fill(0);im.fill(0);
+    const sampleStep=Math.max(1,Math.floor(numFrames/60));
+    for(let fi=0;fi<numFrames;fi+=sampleStep){
+      const off=fi*hop; re.fill(0); im.fill(0);
       for(let k=0;k<FFT_SIZE;k++) re[k]=(data[off+k]||0)*hann[k];
       fft(re,im);
-      for(let k=0;k<freqBins;k++){const m=Math.sqrt(re[k]*re[k]+im[k]*im[k]);if(m>gMax)gMax=m;}
+      for(let k=0;k<freqBins;k++){
+        const m=Math.sqrt(re[k]*re[k]+im[k]*im[k]);
+        if(m>gMax) gMax=m;
+      }
     }
-    const logMax=Math.log10(gMax+1e-10),logMin=logMax-4;
-    const imgW=Math.min(numFrames,w),imgH=h;
-    const imgData=ctx.createImageData(imgW,imgH),px=imgData.data;
+    const logMax=Math.log10(gMax+1e-10), logMin=logMax-4;
 
-    for(let fi=0;fi<numFrames&&fi<imgW;fi++){
-      const off=fi*hop;re.fill(0);im.fill(0);
+    // Render into an offscreen canvas at native frame resolution
+    const offW=numFrames, offH=freqBins;
+    const offCanvas=new OffscreenCanvas(offW,offH);
+    const offCtx=offCanvas.getContext('2d');
+    const imgData=offCtx.createImageData(offW,offH);
+    const px=imgData.data;
+
+    for(let fi=0;fi<numFrames;fi++){
+      const off=fi*hop; re.fill(0); im.fill(0);
       for(let k=0;k<FFT_SIZE;k++) re[k]=(data[off+k]||0)*hann[k];
       fft(re,im);
       for(let bin=0;bin<freqBins;bin++){
         const mag=Math.sqrt(re[bin]*re[bin]+im[bin]*im[bin]);
         const v=Math.max(0,Math.min(1,(Math.log10(mag+1e-10)-logMin)/(logMax-logMin)));
         const[r,g,b]=viridis(v);
-        const y=Math.floor((1-bin/freqBins)*(imgH-1));
-        const idx=(y*imgW+fi)*4;
-        px[idx]=r;px[idx+1]=g;px[idx+2]=b;px[idx+3]=255;
+        // Flip vertically: bin 0 = low freq = bottom
+        const y=(freqBins-1-bin);
+        const idx=(y*offW+fi)*4;
+        px[idx]=r; px[idx+1]=g; px[idx+2]=b; px[idx+3]=255;
       }
     }
-    ctx.putImageData(imgData,pL,0);
-    ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=0.5;
-    for(let i=0;i<=6;i++){const x=pL+i/6*w;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
-    for(let i=0;i<=4;i++){const y=i/4*h;ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(pL+w,y);ctx.stroke();}
+    offCtx.putImageData(imgData,0,0);
 
+    // Scale the offscreen canvas to fill the full display area using drawImage
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ctx.drawImage(offCanvas, pL, 0, drawW, drawH);
+
+    // Grid overlay
+    ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=0.5;
+    for(let i=0;i<=6;i++){const x=pL+i/6*drawW;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,drawH);ctx.stroke();}
+    for(let i=0;i<=4;i++){const y=i/4*drawH;ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(pL+drawW,y);ctx.stroke();}
+
+    // Colorbar
     const cb=document.getElementById('cb-canvas');
-    const cbW=cb.parentElement.offsetWidth,cbH=cb.parentElement.offsetHeight;
-    cb.width=cbW;cb.height=cbH;
+    const cbEl=cb.parentElement;
+    const cbW2=cbEl.offsetWidth, cbH2=cbEl.offsetHeight;
+    cb.width=cbW2; cb.height=cbH2;
     const cctx=cb.getContext('2d');
-    for(let y=0;y<cbH;y++){const[r,g,b]=viridis(1-y/cbH);cctx.fillStyle=`rgb(${r},${g},${b})`;cctx.fillRect(0,y,cbW,1);}
+    for(let y=0;y<cbH2;y++){
+      const[r,g,b]=viridis(1-y/cbH2);
+      cctx.fillStyle=`rgb(${r},${g},${b})`;
+      cctx.fillRect(0,y,cbW2,1);
+    }
+
     resolve();
   },10));
 }
